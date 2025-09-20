@@ -7,6 +7,7 @@ public class Server {
     private HashMap<String, String> log;
     private List<Message> quarantine;
     private List<String> group;
+    private ConsensusAlgorithim consensusAlgorithim;
 
     public Server() {
         log = new HashMap<String, String>();
@@ -26,7 +27,12 @@ public class Server {
     }
     
     public void doConsensus(List<Message> messages) {
-
+        List<Message> resultConsensus = consensusAlgorithim.doConsensus(messages);
+        synchronized(this) {
+            for(Message message : resultConsensus) {
+                log.put(message.key, message.value);
+            }
+        }
     }
     
 }
