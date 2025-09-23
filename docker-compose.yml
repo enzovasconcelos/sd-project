@@ -8,6 +8,9 @@ services:
     environment:
       ZOO_MY_ID: 1
       ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
+    volumes:
+      - zoo1_data:/data
+      - zoo1_datalog:/datalog
 
   zoo2:
     image: zookeeper
@@ -18,6 +21,9 @@ services:
     environment:
       ZOO_MY_ID: 2
       ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
+    volumes:
+      - zoo2_data:/data
+      - zoo2_datalog:/datalog
 
   zoo3:
     image: zookeeper
@@ -28,6 +34,9 @@ services:
     environment:
       ZOO_MY_ID: 3
       ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
+    volumes:
+      - zoo3_data:/data
+      - zoo3_datalog:/datalog
 
   zoonavi:
     image: elkozmon/zoonavigator
@@ -57,5 +66,11 @@ services:
     depends_on:
       - zoonavi
 
-
+volumes:
+  zoo1_data:
+  zoo1_datalog:
+  zoo2_data:
+  zoo2_datalog:
+  zoo3_data:
+  zoo3_datalog:
 
