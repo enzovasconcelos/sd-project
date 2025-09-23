@@ -34,4 +34,17 @@ services:
     restart: unless-stopped
     ports:
       - "9000:9000"
+    depends_on:
+      - zoo1
+      - zoo2
+      - zoo3
 
+  server:
+    build: ./server/
+    restart: unless-stopped
+    ports:
+      - "3200:3200"
+    environment:
+      ZOOKEEPER_ADD: zoo1:2181,zoo2:2181,zoo3:2181
+    depends_on:
+      - zoonavi

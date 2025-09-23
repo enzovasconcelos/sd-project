@@ -17,7 +17,7 @@ public class Main {
         System.out.println("Starting Server...");
         ExecutorService pool = Executors.newFixedThreadPool(poolSize);
         try {
-            Server server = new Server("localhost:2181,localhost:2182,localhost:2183");
+            Server server = new Server(System.getenv("ZOOKEEPER_ADD"));
 
             ServerSocket serverSocket = new ServerSocket(PORT);
             System.out.println("Running...");
