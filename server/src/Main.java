@@ -8,6 +8,7 @@ public class Main {
 
     static final int poolSize = 20;
     static final int PORT = 3200;
+    static final int PORT_CONSENSUS = 3300;
 
     public static void main(String[] args) {
         ExecutorService pool = Executors.newFixedThreadPool(poolSize);

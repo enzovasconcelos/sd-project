@@ -21,12 +21,24 @@ public class Handler implements Runnable {
             String[] request = input.nextLine().split(" ");
             System.out.println("Request recebida: " + Arrays.toString(request));
             String response = "";
-            if (request[0].equals("read")) {
-                response = server.read(request[1]);
-            } else {
-                server.write(new Message(request[1], request[2]));
-                System.out.println("vou escrever na resposta");
-                response = "writed!";
+            switch (request[0]) {
+                case "read":
+                    response = server.read(request[1]);
+                    break;
+                
+                case "write":
+                    server.write(new Message(request[1], request[2]));
+                    System.out.println("vou escrever na resposta");
+                    response = "writed!";
+                    break;
+                    
+                case "consensus":
+                    // TODO: algorithim consensus
+                    break;
+            
+                default:
+                    response = "operation not found";
+                    break;
             }
             PrintStream resposta = new PrintStream(conn.getOutputStream());
             resposta.println(response);

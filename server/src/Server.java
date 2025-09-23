@@ -13,13 +13,19 @@ public class Server {
         log = new HashMap<String, String>();
         group = new ArrayList<String>();
         quarantine = new ArrayList<Message>();
+        group = new ArrayList<String>();;
+        group.add("locahost:3200");
+        group.add("locahost:3201");
+        group.add("locahost:3202");
+        group.add("locahost:3203");
+        group.add("locahost:3204");
     }
     
     public void write(Message message) {
         synchronized(this) {
             quarantine.add(message);
+            doConsensus(quarantine);
         }
-        doConsensus(quarantine);
     }
     
     public String read(String key) {
@@ -27,8 +33,8 @@ public class Server {
     }
     
     public void doConsensus(List<Message> messages) {
-        List<Message> resultConsensus = consensusAlgorithim.doConsensus(messages);
         synchronized(this) {
+            List<Message> resultConsensus = consensusAlgorithim.doConsensus(messages);
             for(Message message : resultConsensus) {
                 log.put(message.key, message.value);
             }
