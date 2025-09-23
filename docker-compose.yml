@@ -48,3 +48,14 @@ services:
       ZOOKEEPER_ADD: zoo1:2181,zoo2:2181,zoo3:2181
     depends_on:
       - zoonavi
+
+  replicas:
+    build: ./server/
+    restart: unless-stopped
+    environment:
+      ZOOKEEPER_ADD: zoo1:2181,zoo2:2181,zoo3:2181
+    depends_on:
+      - zoonavi
+
+
+

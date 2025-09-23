@@ -22,6 +22,7 @@ public class Handler implements Runnable {
     public void run() {
         System.out.println("entrando na thread que trata a req");
         try {
+            server.setInicio(System.nanoTime());
             Scanner input = new Scanner(conn.getInputStream());
             String line = input.nextLine();
             String[] request = line.split(" ");

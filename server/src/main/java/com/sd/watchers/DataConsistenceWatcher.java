@@ -20,18 +20,17 @@ public class DataConsistenceWatcher implements Watcher {
         this.server = server;
     }
 
-    @Override
-    public void process(WatchedEvent event) {
+    public synchronized void start(WatchedEvent event) {
         if (event.getType() == Event.EventType.NodeChildrenChanged && event.getPath().equals("/ops")) {
             try {
                 List<String> children = zk.getChildren("/ops", this);
                 children.sort(String::compareTo);
-                System.out.println(children);
 
                 for (String child : children) {
                     if (child.compareTo(server.getLastProcessedNode()) > 0) {
                         byte[] data = zk.getData("/ops/" + child, false, null);
                         String[] op = new String(data).split(" ");
+                        System.out.println("op_watcher_zoo: " + Arrays.toString(op));
                         switch (op[0]) {
                             case "write":
                                 server.write(new Message(op[1], op[2]));
@@ -40,13 +39,27 @@ public class DataConsistenceWatcher implements Watcher {
                                 server.delete(op[1]);
                                 break;
                         }
+                        server.setLastProcessedNode(child);
                     }
+
+                }
+                long inicio = server.getInicio();
+                long fim = System.nanoTime();
+                if(inicio != 0){
+                    long resultado = fim - inicio;
+                    System.out.println("tempo: " + resultado);
+                    server.setInicio(0L);
                 }
 
             } catch (Exception e) {
                 System.err.println(e.getMessage());
             }
         }
+    }
+
+    @Override
+    public void process(WatchedEvent event) {
+        start(event);
     }
 }
 
