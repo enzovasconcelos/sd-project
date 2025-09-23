@@ -6,6 +6,7 @@ import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
 
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -25,19 +26,23 @@ public class DataConsistenceWatcher implements Watcher {
             try {
                 List<String> children = zk.getChildren("/ops", this);
                 children.sort(String::compareTo);
+                System.out.println(children);
 
-                String lastOne = children.get(children.size() - 1);
-                byte[] data = zk.getData("/ops/" + lastOne, false, null);
-
-                String[] op = new String(data).split(" ");
-                switch (op[0]) {
-                    case "write":
-                        server.write(new Message(op[1], op[2]));
-                        break;
-                    case "delete":
-                        String response = server.delete(op[1]);
-                        break;
+                for (String child : children) {
+                    if (child.compareTo(server.getLastProcessedNode()) > 0) {
+                        byte[] data = zk.getData("/ops/" + child, false, null);
+                        String[] op = new String(data).split(" ");
+                        switch (op[0]) {
+                            case "write":
+                                server.write(new Message(op[1], op[2]));
+                                break;
+                            case "delete":
+                                server.delete(op[1]);
+                                break;
+                        }
+                    }
                 }
+
             } catch (Exception e) {
                 System.err.println(e.getMessage());
             }
